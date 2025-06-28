@@ -23,10 +23,10 @@ dependencies:
   path: ^1.8.2
   provider: ^6.0.5
   sqflite: ^2.2.2
-  intl: ^0.18.0
-  google_mobile_ads: ^2.3.0
+  intl: ^0.20.2
+  google_mobile_ads: ^6.0.0
   shared_preferences: ^2.0.18
-  package_info_plus: ^3.0.3
+  package_info_plus: ^8.3.0
   flutter_dotenv: ^5.0.2
 
 dev_dependencies:
@@ -37,6 +37,9 @@ dev_dependencies:
   drift_dev: ^2.2.0+1
   build_runner: ^2.2.1
   flutter_launcher_icons: ^0.11.0
+
+dependency_overrides:
+  win32: ^5.0.0
 
 flutter_icons:
   android: true
