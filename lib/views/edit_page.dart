@@ -36,6 +36,7 @@ class EditPage extends StatelessWidget {
           ),
           leading: IconButton(
             icon: const Icon(Icons.list_sharp),
+            color: Colors.white,
             onPressed: () async {
               await Navigator.push(
                 context,

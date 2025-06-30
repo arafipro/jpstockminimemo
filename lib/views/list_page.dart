@@ -17,6 +17,7 @@ class ListPage extends StatelessWidget {
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.settings),
+              color: Colors.white,
               onPressed: () async {
                 // 画面遷移の動きを変更
                 Navigator.of(context).push(
@@ -147,7 +148,10 @@ class ListPage extends StatelessWidget {
             "新規登録",
             style: titleTextStyle16,
           ),
-          icon: const Icon(Icons.add),
+          icon: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
         ),
       ),
     );
