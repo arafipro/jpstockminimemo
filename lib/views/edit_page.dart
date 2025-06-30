@@ -85,7 +85,7 @@ class EditPage extends StatelessWidget {
                               return "有効な証券コードを入力してください";
                             }
                           },
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.text,
                         ),
                       ),
                       CustomTextFormField(
