@@ -1,4 +1,5 @@
 import "package:jpstockminimemo/constants/imports.dart";
+import "package:jpstockminimemo/utils/stock_code_validator.dart";
 
 class EditPage extends StatelessWidget {
   final StockMemo? stockmemo;
@@ -71,7 +72,7 @@ class EditPage extends StatelessWidget {
                         child: CustomTextFormField(
                           controller: codeController,
                           labelText: "証券コード",
-                          hintText: "4桁の半角数字を入力してください",
+                          hintText: "証券コードを入力してください",
                           maxLength: 4,
                           onChanged: (text) {
                             model.stockCode = text;
@@ -79,8 +80,8 @@ class EditPage extends StatelessWidget {
                           validator: (value) {
                             if (value.isEmpty) {
                               return "証券コードを入力してください";
-                            } else if (!RegExp(r"\d{4}").hasMatch(value)) {
-                              return "４桁の半角数字を入力してください";
+                            } else if (!StockCodeValidator.isValid(value)) {
+                              return "有効な証券コードを入力してください";
                             }
                           },
                           keyboardType: TextInputType.number,

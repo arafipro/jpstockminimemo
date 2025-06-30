@@ -51,7 +51,7 @@ updatedAt   ：更新日時
                 ),
                 sizedBoxWidth8,
                 Text(
-                  "($code)", // 証券コード
+                  "(${code?.toUpperCase()})", // 証券コード
                   style: fontSize16,
                 ),
               ],
