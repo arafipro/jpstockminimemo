@@ -5,6 +5,7 @@ class SettingsPage extends StatelessWidget {
   Future<PackageInfo> _getPackageInfo() {
     return PackageInfo.fromPlatform();
   }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SettingsModel>(
@@ -36,22 +37,23 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               FutureBuilder<PackageInfo>(
-                  future: _getPackageInfo(),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<PackageInfo> snapshot,
-                  ) {
-                    if (snapshot.hasError) {
-                      return const Text("ERROR");
-                    } else if (!snapshot.hasData) {
-                      return const Text("Loading...");
-                    }
-                    final data = snapshot.data!;
-                    return ListTile(
-                      title: const Text("アプリバージョン"),
-                      subtitle: Text(data.version),
-                    );
-                  }),
+                future: _getPackageInfo(),
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<PackageInfo> snapshot,
+                ) {
+                  if (snapshot.hasError) {
+                    return const Text("ERROR");
+                  } else if (!snapshot.hasData) {
+                    return const Text("Loading...");
+                  }
+                  final data = snapshot.data!;
+                  return ListTile(
+                    title: const Text("アプリバージョン"),
+                    subtitle: Text(data.version),
+                  );
+                },
+              ),
             ],
           ),
         ),
