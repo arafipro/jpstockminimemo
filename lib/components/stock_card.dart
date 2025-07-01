@@ -38,6 +38,7 @@ updatedAt   ：更新日時
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -51,7 +52,7 @@ updatedAt   ：更新日時
                 ),
                 sizedBoxWidth8,
                 Text(
-                  "($code)", // 証券コード
+                  "(${code?.toUpperCase()})", // 証券コード
                   style: fontSize16,
                 ),
               ],
@@ -93,6 +94,7 @@ updatedAt   ：更新日時
                           shape: const StadiumBorder(),
                         ),
                         icon: const Icon(
+                          color: Colors.white,
                           Icons.edit,
                         ),
                         label: const Text(
@@ -107,6 +109,7 @@ updatedAt   ：更新日時
                           shape: const StadiumBorder(),
                         ),
                         icon: const Icon(
+                          color: Colors.white,
                           Icons.delete,
                         ),
                         label: const Text(
