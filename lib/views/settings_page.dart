@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import "package:jpstockminimemo/constants/imports.dart";
 
 class SettingsPage extends StatelessWidget {
@@ -54,6 +55,51 @@ class SettingsPage extends StatelessWidget {
                   );
                 },
               ),
+              // デバッグ用メニュー（デバッグビルド時のみ表示）
+              if (kDebugMode) ...[
+                // デバッグ用：オンボーディング状態表示
+                FutureBuilder<bool>(
+                  future: OnboardingService.getOnboardingStatus(),
+                  builder: (context, snapshot) {
+                    final isCompleted = snapshot.data ?? false;
+                    return ListTile(
+                      title: const Text("オンボーディング状態"),
+                      subtitle: Text(isCompleted ? "完了済み" : "未完了"),
+                      trailing: Icon(
+                        isCompleted ? Icons.check_circle : Icons.pending,
+                        color: isCompleted ? Colors.green : Colors.orange,
+                      ),
+                    );
+                  },
+                ),
+                // デバッグ用：オンボーディングリセット
+                ListTile(
+                  title: const Text("オンボーディングをリセット"),
+                  subtitle: const Text("開発・テスト用（デバッグ時のみ表示）"),
+                  trailing: const Icon(Icons.refresh),
+                  onTap: () async {
+                    await OnboardingService.resetOnboarding();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("オンボーディングがリセットされました。"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+
+                      // 少し待ってからオンボーディング画面に遷移
+                      await Future.delayed(const Duration(seconds: 2));
+                      if (context.mounted) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => const OnboardingPage(),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                ),
+              ],
             ],
           ),
         ),

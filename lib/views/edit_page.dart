@@ -1,5 +1,4 @@
 import "package:jpstockminimemo/constants/imports.dart";
-import "package:jpstockminimemo/utils/stock_code_validator.dart";
 
 class EditPage extends StatelessWidget {
   final StockMemo? stockmemo;
