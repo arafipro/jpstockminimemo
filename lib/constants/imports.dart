@@ -44,6 +44,7 @@ export "package:jpstockminimemo/constants/features.dart";
 export "package:jpstockminimemo/models/onboarding_item.dart";
 export "package:jpstockminimemo/models/stock_memo.dart";
 export "package:jpstockminimemo/models/subscription_plan.dart";
+export "package:jpstockminimemo/models/subscription_status.dart";
 
 // services
 export "package:jpstockminimemo/services/revenue_cat_service.dart";

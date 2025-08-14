@@ -10,6 +10,12 @@ class RevenueCatService {
   bool _isInitialized = false;
   CustomerInfo? _customerInfo;
 
+  // 状態管理用のプロパティ
+  StreamController<SubscriptionStatus>? _statusController;
+  SubscriptionStatus _currentStatus = SubscriptionStatus.none();
+  bool _hasError = false;
+  String? _errorMessage;
+
   /// RevenueCat の初期化
   /// Phase 1: 基本機能のみ
   Future<void> initialize() async {
@@ -24,6 +30,7 @@ class RevenueCatService {
 
       if (apiKey == null) {
         debugPrint("RevenueCat API key not found in environment variables");
+        _setError("RevenueCat API key not found");
         return;
       }
 
@@ -34,13 +41,18 @@ class RevenueCatService {
       await Purchases.configure(configuration);
 
       _isInitialized = true;
+      _clearError();
       debugPrint("RevenueCat initialized successfully");
 
       // 初期化後にカスタマー情報を取得
       await _fetchCustomerInfo();
+
+      // 初期化時に現在の状態を取得して設定
+      await _initializeStatus();
     } catch (e) {
       debugPrint("Error initializing RevenueCat: $e");
       _isInitialized = false;
+      _setError("Failed to initialize RevenueCat: $e");
     }
   }
 
@@ -61,7 +73,106 @@ class RevenueCatService {
       debugPrint("Customer info fetched successfully");
     } catch (e) {
       debugPrint("Error fetching customer info: $e");
+      _setError("Failed to fetch customer info: $e");
     }
+  }
+
+  /// 初期化時に現在の状態を取得して設定
+  Future<void> _initializeStatus() async {
+    final status = await getSubscriptionStatus();
+    _updateStatus(status);
+  }
+
+  /// 状態を更新して通知
+  void _updateStatus(SubscriptionStatus newStatus) {
+    if (_currentStatus != newStatus) {
+      _currentStatus = newStatus;
+      _statusController?.add(newStatus);
+      debugPrint("Subscription status updated: ${newStatus.statusType}");
+    }
+  }
+
+  /// エラー状態を設定
+  void _setError(String message) {
+    _hasError = true;
+    _errorMessage = message;
+    debugPrint("RevenueCat error: $message");
+  }
+
+  /// エラー状態をクリア
+  void _clearError() {
+    _hasError = false;
+    _errorMessage = null;
+  }
+
+  /// CustomerInfo から詳細な SubscriptionStatus を作成
+  SubscriptionStatus _createSubscriptionStatusFromCustomerInfo(
+      CustomerInfo customerInfo) {
+    final entitlements = customerInfo.entitlements.active;
+
+    if (entitlements.isEmpty) {
+      return SubscriptionStatus.none();
+    }
+
+    final premiumEntitlement = entitlements["premium"];
+    if (premiumEntitlement == null) {
+      return SubscriptionStatus.none();
+    }
+
+    final platform = Platform.isAndroid ? "android" : "ios";
+    final subscriptionId = premiumEntitlement.productIdentifier;
+
+    // 日付の変換ヘルパー関数
+    DateTime? parseDate(String? dateString) {
+      if (dateString == null) return null;
+      try {
+        return DateTime.parse(dateString);
+      } catch (e) {
+        debugPrint("Error parsing date: $dateString");
+        return null;
+      }
+    }
+
+    // トライアル期間の確認
+    if (premiumEntitlement.periodType == PeriodType.trial) {
+      final trialEndDate = parseDate(premiumEntitlement.expirationDate);
+      if (trialEndDate != null) {
+        return SubscriptionStatus.trial(
+          trialEndDate: trialEndDate,
+          subscriptionId: subscriptionId,
+          platform: platform,
+        );
+      }
+      return SubscriptionStatus.none();
+    }
+
+    // アクティブなサブスクリプション
+    if (premiumEntitlement.isActive) {
+      final startDate = parseDate(premiumEntitlement.latestPurchaseDate);
+      final endDate = parseDate(premiumEntitlement.expirationDate);
+      if (startDate != null && endDate != null) {
+        return SubscriptionStatus.active(
+          startDate: startDate,
+          endDate: endDate,
+          subscriptionId: subscriptionId,
+          platform: platform,
+        );
+      }
+      return SubscriptionStatus.none();
+    }
+
+    // 期限切れ
+    final startDate = parseDate(premiumEntitlement.latestPurchaseDate);
+    final endDate = parseDate(premiumEntitlement.expirationDate);
+    if (startDate != null && endDate != null) {
+      return SubscriptionStatus.expired(
+        startDate: startDate,
+        endDate: endDate,
+        subscriptionId: subscriptionId,
+        platform: platform,
+      );
+    }
+    return SubscriptionStatus.none();
   }
 
   /// サブスクリプション状態を取得
@@ -69,7 +180,7 @@ class RevenueCatService {
   Future<SubscriptionStatus> getSubscriptionStatus() async {
     if (!_isInitialized) {
       debugPrint("RevenueCat not initialized");
-      return SubscriptionStatus.none;
+      return SubscriptionStatus.none();
     }
 
     try {
@@ -77,74 +188,43 @@ class RevenueCatService {
       await _fetchCustomerInfo();
 
       if (_customerInfo == null) {
-        return SubscriptionStatus.none;
+        return SubscriptionStatus.none();
       }
 
-      // アクティブなエンタイトルメントを確認
-      final entitlements = _customerInfo!.entitlements.active;
-
-      if (entitlements.isEmpty) {
-        return SubscriptionStatus.none;
-      }
-
-      // プレミアムエンタイトルメントを確認
-      final premiumEntitlement = entitlements["premium"];
-      if (premiumEntitlement == null) {
-        return SubscriptionStatus.none;
-      }
-
-      // トライアル期間の確認
-      if (premiumEntitlement.periodType == PeriodType.trial) {
-        return SubscriptionStatus.trial;
-      }
-
-      // アクティブなサブスクリプション
-      if (premiumEntitlement.isActive) {
-        return SubscriptionStatus.active;
-      }
-
-      return SubscriptionStatus.expired;
+      // CustomerInfo から詳細な SubscriptionStatus を作成
+      final status = _createSubscriptionStatusFromCustomerInfo(_customerInfo!);
+      return status;
     } catch (e) {
       debugPrint("Error getting subscription status: $e");
-      return SubscriptionStatus.none;
+      _setError("Failed to get subscription status: $e");
+      return SubscriptionStatus.none();
     }
   }
+
+  /// 状態変更のストリームを取得
+  Stream<SubscriptionStatus> get statusStream {
+    _statusController ??= StreamController<SubscriptionStatus>.broadcast();
+    return _statusController!.stream;
+  }
+
+  /// 現在の状態を取得
+  SubscriptionStatus get currentStatus => _currentStatus;
 
   /// 初期化状態を確認
   bool get isInitialized => _isInitialized;
 
   /// カスタマー情報を取得（デバッグ用）
   CustomerInfo? get customerInfo => _customerInfo;
-}
 
-/// サブスクリプション状態の列挙型
-/// Phase 1: 基本モデル
-enum SubscriptionStatus {
-  none, // 未購入
-  trial, // 無料トライアル中
-  active, // アクティブ
-  expired // 期限切れ
-}
+  /// エラー状態を確認
+  bool get hasError => _hasError;
 
-/// サブスクリプション状態の拡張メソッド
-extension SubscriptionStatusExtension on SubscriptionStatus {
-  /// 状態の日本語表示名を取得
-  String get displayName {
-    switch (this) {
-      case SubscriptionStatus.none:
-        return "未購入";
-      case SubscriptionStatus.trial:
-        return "トライアル中";
-      case SubscriptionStatus.active:
-        return "アクティブ";
-      case SubscriptionStatus.expired:
-        return "期限切れ";
-    }
-  }
+  /// エラーメッセージを取得
+  String? get errorMessage => _errorMessage;
 
-  /// プレミアム機能が利用可能かどうか
-  bool get isPremium {
-    return this == SubscriptionStatus.trial ||
-        this == SubscriptionStatus.active;
+  /// サービスの破棄時にストリームを閉じる
+  void dispose() {
+    _statusController?.close();
+    _statusController = null;
   }
 }
