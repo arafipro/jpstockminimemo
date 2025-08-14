@@ -28,6 +28,10 @@ dependencies:
   shared_preferences: ^2.0.18
   package_info_plus: ^8.3.0
   flutter_dotenv: ^5.0.2
+  purchases_flutter: ^9.2.0
+  purchases_ui_flutter: ^9.2.0
+  connectivity_plus: ^6.1.5 # ネットワーク状態監視
+  flutter_local_notifications: ^19.4.0 # ローカル通知用
 
 dev_dependencies:
   flutter_test:
