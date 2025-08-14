@@ -85,7 +85,7 @@ updatedAt   ：更新日時
               ],
             ),
             isButtonMode
-                ? ButtonBar(
+                ? OverflowBar(
                     alignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
                       ElevatedButton.icon(

@@ -156,7 +156,7 @@ class EditPage extends StatelessWidget {
                         padding: const EdgeInsets.all(12.0),
                         child: ElevatedButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
+                            backgroundColor: WidgetStateProperty.all<Color>(
                               buttonColor,
                             ),
                           ),
@@ -211,20 +211,24 @@ class EditPage extends StatelessWidget {
         },
       );
       await model.addMemo();
-      await dialogResult;
-      await navigator;
+      if (context.mounted) {
+        await dialogResult;
+        await navigator;
+      }
     } catch (e) {
-      showDialog(
-        context: context,
-        builder: (
-          BuildContext context,
-        ) {
-          return CustomAlertDialog(
-            title: e.toString(),
-            buttonText: "OK",
-          );
-        },
-      );
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (
+            BuildContext context,
+          ) {
+            return CustomAlertDialog(
+              title: e.toString(),
+              buttonText: "OK",
+            );
+          },
+        );
+      }
     }
   }
 
@@ -251,20 +255,24 @@ class EditPage extends StatelessWidget {
         },
       );
       await model.updateMemo(stockmemo!);
-      await dialogResult;
-      await navigator;
+      if (context.mounted) {
+        await dialogResult;
+        await navigator;
+      }
     } catch (e) {
-      showDialog(
-        context: context,
-        builder: (
-          BuildContext context,
-        ) {
-          return CustomAlertDialog(
-            title: e.toString(),
-            buttonText: "OK",
-          );
-        },
-      );
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (
+            BuildContext context,
+          ) {
+            return CustomAlertDialog(
+              title: e.toString(),
+              buttonText: "OK",
+            );
+          },
+        );
+      }
     }
   }
 }

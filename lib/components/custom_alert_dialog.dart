@@ -25,7 +25,7 @@ buttonText  ：ダイアログボタンタイトル
       actions: <Widget>[
         ElevatedButton(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
+            backgroundColor: WidgetStateProperty.all<Color>(
               buttonColor,
             ),
           ),
