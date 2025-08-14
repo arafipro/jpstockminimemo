@@ -10,16 +10,42 @@ class OnboardingPage extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool _isButtonEnabled = false;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
   @override
   void dispose() {
     _pageController.dispose();
+    _timer?.cancel();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    setState(() {
+      _isButtonEnabled = false;
+    });
+
+    _timer = Timer(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() {
+          _isButtonEnabled = true;
+        });
+      }
+    });
   }
 
   void _onPageChanged(int page) {
     setState(() {
       _currentPage = page;
     });
+    _startTimer(); // ページが変わったらタイマーを再スタート
   }
 
   void _nextPage() {
@@ -126,21 +152,44 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: _nextPage,
+                      onPressed: _isButtonEnabled ? _nextPage : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: items[_currentPage].color,
+                        backgroundColor: _isButtonEnabled
+                            ? items[_currentPage].color
+                            : items[_currentPage].color.withValues(alpha: 0.5),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        elevation: 2,
+                        elevation: _isButtonEnabled ? 2 : 0,
                       ),
-                      child: Text(
-                        _currentPage == items.length - 1 ? "始める" : "次へ",
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (!_isButtonEnabled) ...[
+                            SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white.withValues(alpha: 0.7),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          Text(
+                            _currentPage == items.length - 1 ? "始める" : "次へ",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: _isButtonEnabled
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
