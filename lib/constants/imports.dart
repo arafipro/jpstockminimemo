@@ -56,4 +56,5 @@ export "package:jpstockminimemo/views/error_page.dart";
 export "package:jpstockminimemo/views/list_page.dart";
 export "package:jpstockminimemo/views/load_page.dart";
 export "package:jpstockminimemo/views/onboarding_page.dart";
+export "package:jpstockminimemo/views/paywall_page.dart";
 export "package:jpstockminimemo/views/settings_page.dart";
