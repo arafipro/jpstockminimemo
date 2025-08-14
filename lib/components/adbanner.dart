@@ -39,7 +39,7 @@ class AdBanner extends StatelessWidget {
     final AdWidget adWidget = AdWidget(ad: myBanner);
     return Container(
       alignment: Alignment.center,
-      width: WidgetsBinding.instance.window.physicalSize.width,
+      width: View.of(context).physicalSize.width,
       height: myBanner.size.height.toDouble(),
       child: adWidget,
     );
