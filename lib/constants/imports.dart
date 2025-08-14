@@ -15,6 +15,7 @@ export "package:sqflite/sqflite.dart";
 export "package:shared_preferences/shared_preferences.dart";
 export "package:package_info_plus/package_info_plus.dart";
 export "package:flutter_dotenv/flutter_dotenv.dart";
+export "package:purchases_flutter/purchases_flutter.dart";
 
 // components
 export "package:jpstockminimemo/components/adbanner.dart";
