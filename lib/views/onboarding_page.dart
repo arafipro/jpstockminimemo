@@ -33,9 +33,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     }
   }
 
-  void _skipOnboarding() {
-    _completeOnboarding();
-  }
+  // void _skipOnboarding() {
+  //   _completeOnboarding();
+  // }
 
   Future<void> _completeOnboarding() async {
     await OnboardingService.setOnboardingCompleted();
@@ -65,22 +65,22 @@ class _OnboardingPageState extends State<OnboardingPage> {
         child: Column(
           children: [
             // スキップボタン
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextButton(
-                  onPressed: _skipOnboarding,
-                  child: Text(
-                    "スキップ",
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.topRight,
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(16.0),
+            //     child: TextButton(
+            //       onPressed: _skipOnboarding,
+            //       child: Text(
+            //         "スキップ",
+            //         style: TextStyle(
+            //           color: Colors.grey[600],
+            //           fontSize: 16,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
 
             // ページビュー
             Expanded(
