@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import "package:jpstockminimemo/constants/imports.dart";
 
 class SettingsPage extends StatelessWidget {
