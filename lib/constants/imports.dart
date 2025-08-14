@@ -29,10 +29,12 @@ export "package:jpstockminimemo/constants/colors.dart";
 export "package:jpstockminimemo/constants/text_styles.dart";
 export "package:jpstockminimemo/constants/texts.dart";
 export "package:jpstockminimemo/constants/onboarding_items.dart";
+export "package:jpstockminimemo/constants/subscription_plans.dart";
 
 // models
 export "package:jpstockminimemo/models/onboarding_item.dart";
 export "package:jpstockminimemo/models/stock_memo.dart";
+export "package:jpstockminimemo/models/subscription_plan.dart";
 
 // services
 export "package:jpstockminimemo/services/revenue_cat_service.dart";
