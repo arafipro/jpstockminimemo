@@ -43,7 +43,7 @@
 | タスク 1.1.1 | `pubspec.yaml` に依存関係追加                                          | [x]  |
 | タスク 1.1.2 | `lib/services/revenue_cat_service.dart` 作成（最小限の機能）           | [x]  |
 | タスク 1.1.3 | `main.dart` で RevenueCat 初期化                                       | [x]  |
-| タスク 1.1.4 | **動作確認**: アプリ起動時に RevenueCat が正常に初期化されることを確認 | [ ]  |
+| タスク 1.1.4 | **動作確認**: アプリ起動時に RevenueCat が正常に初期化されることを確認 | [x]  |
 
 #### Step 1.2: 基本的なペイウォール画面 (1 日)
 
