@@ -5,9 +5,23 @@ void main() async {
   MobileAds.instance.initialize();
   // .envを読み込めるように設定.
   await dotenv.load(fileName: ".env");
+
+  // RevenueCat の初期化
+  await _initializeRevenueCat();
+
   runApp(
     const MyApp(),
   );
+}
+
+/// RevenueCat の初期化処理
+Future<void> _initializeRevenueCat() async {
+  try {
+    await RevenueCatService().initialize();
+    debugPrint("RevenueCat initialization completed in main.dart");
+  } catch (e) {
+    debugPrint("Error initializing RevenueCat in main.dart: $e");
+  }
 }
 
 class MyApp extends StatelessWidget {

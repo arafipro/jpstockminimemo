@@ -34,9 +34,12 @@ export "package:jpstockminimemo/constants/onboarding_items.dart";
 export "package:jpstockminimemo/models/onboarding_item.dart";
 export "package:jpstockminimemo/models/stock_memo.dart";
 
+// services
+export "package:jpstockminimemo/services/revenue_cat_service.dart";
+export "package:jpstockminimemo/services/onboarding_service.dart";
+
 // utils
 export "package:jpstockminimemo/utils/dbhelper.dart";
-export "package:jpstockminimemo/utils/onboarding_service.dart";
 export "package:jpstockminimemo/utils/stock_code_validator.dart";
 
 // viewmodels
