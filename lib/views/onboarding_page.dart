@@ -69,15 +69,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => Consumer<SettingsModel>(
-            builder: (context, model, child) {
-              return Scaffold(
-                body: model.startEditPage
-                    ? EditPage(stockmemo: null)
-                    : const ListPage(),
-              );
-            },
-          ),
+          builder: (context) => const PaywallPage(),
         ),
       );
     }

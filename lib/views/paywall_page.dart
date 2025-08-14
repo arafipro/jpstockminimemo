@@ -11,7 +11,7 @@ class PaywallPage extends StatelessWidget {
         backgroundColor: appBarColor,
         leading: IconButton(
           icon: const Icon(Icons.close, color: textColor),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => _closePaywall(context),
         ),
         title: const Text(
           "プレミアム機能",
@@ -90,11 +90,6 @@ class PaywallPage extends StatelessWidget {
   Widget _buildFeaturesSection() {
     final features = [
       {"icon": Icons.block, "title": "広告の完全削除", "description": "快適な使用環境"},
-      {
-        "icon": Icons.all_inclusive,
-        "title": "メモ数の無制限",
-        "description": "制限なくメモを保存"
-      },
       {"icon": Icons.backup, "title": "データバックアップ", "description": "大切なデータを保護"},
       {"icon": Icons.search, "title": "検索機能", "description": "素早くメモを検索"},
     ];
@@ -374,6 +369,23 @@ class PaywallPage extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+
+  /// ペイウォール画面を閉じてメイン画面に遷移
+  void _closePaywall(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => Consumer<SettingsModel>(
+          builder: (context, model, child) {
+            return Scaffold(
+              body: model.startEditPage
+                  ? EditPage(stockmemo: null)
+                  : const ListPage(),
+            );
+          },
+        ),
+      ),
     );
   }
 }
