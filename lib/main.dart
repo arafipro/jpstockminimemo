@@ -28,9 +28,16 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<SettingsModel>(
-      // 全ての設定値を取得
-      create: (_) => SettingsModel()..getAllSettings(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsModel>(
+          // 全ての設定値を取得
+          create: (_) => SettingsModel()..getAllSettings(),
+        ),
+        Provider<RevenueCatService>(
+          create: (_) => RevenueCatService(),
+        ),
+      ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         // Delegate には、flutter_localizations 標準のものだけを設定

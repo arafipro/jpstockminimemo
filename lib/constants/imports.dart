@@ -30,6 +30,7 @@ export "package:jpstockminimemo/components/paywall_restore_button.dart";
 export "package:jpstockminimemo/components/paywall_terms.dart";
 export "package:jpstockminimemo/components/paywall_plan_card.dart";
 export "package:jpstockminimemo/components/paywall_feature_item.dart";
+export "package:jpstockminimemo/components/subscription_status_display.dart";
 
 // constants
 export "package:jpstockminimemo/constants/box_styles.dart";
