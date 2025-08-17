@@ -1,6 +1,7 @@
 // dart
 export "dart:async";
 export "dart:io";
+export "dart:convert";
 
 // flutter
 export "package:flutter/material.dart";
@@ -16,6 +17,7 @@ export "package:shared_preferences/shared_preferences.dart";
 export "package:package_info_plus/package_info_plus.dart";
 export "package:flutter_dotenv/flutter_dotenv.dart";
 export "package:purchases_flutter/purchases_flutter.dart";
+export "package:connectivity_plus/connectivity_plus.dart";
 
 // components
 export "package:jpstockminimemo/components/adbanner.dart";
@@ -50,6 +52,7 @@ export "package:jpstockminimemo/models/subscription_status.dart";
 // services
 export "package:jpstockminimemo/services/revenue_cat_service.dart";
 export "package:jpstockminimemo/services/onboarding_service.dart";
+export "package:jpstockminimemo/services/offline_subscription_manager.dart";
 
 // utils
 export "package:jpstockminimemo/utils/dbhelper.dart";

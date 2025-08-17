@@ -9,6 +9,8 @@ class RevenueCatService {
 
   bool _isInitialized = false;
   CustomerInfo? _customerInfo;
+  final OfflineSubscriptionManager _offlineManager =
+      OfflineSubscriptionManager();
 
   // 状態管理用のプロパティ
   StreamController<SubscriptionStatus>? _statusController;
@@ -45,6 +47,9 @@ class RevenueCatService {
 
       _isInitialized = true;
       _clearError();
+
+      // オフライン管理サービスの初期化
+      await _offlineManager.initialize();
 
       // 初期化後にカスタマー情報を取得
       await _fetchCustomerInfo();
@@ -178,7 +183,7 @@ class RevenueCatService {
   }
 
   /// サブスクリプション状態を取得
-  /// Phase 1: 基本機能のみ
+  /// Phase 1: 基本機能のみ（オフライン対応）
   Future<SubscriptionStatus> getSubscriptionStatus() async {
     // 初期化前でもモックデータを返す
     if (!_isInitialized) {
@@ -186,22 +191,64 @@ class RevenueCatService {
     }
 
     try {
-      // 最新のカスタマー情報を取得
-      await _fetchCustomerInfo();
+      // ネットワーク接続状態を確認
+      final isOnline = await _offlineManager.isOnline();
 
-      if (_customerInfo == null) {
-        // テスト用: モックデータを返す（開発中のみ）
+      if (isOnline) {
+        // オンライン時: 最新のカスタマー情報を取得
+        await _fetchCustomerInfo();
+
+        if (_customerInfo == null) {
+          // テスト用: モックデータを返す（開発中のみ）
+          if (kDebugMode) {
+            final mockStatus = _getMockSubscriptionStatus();
+            // モックデータをローカルに保存
+            await _offlineManager.saveSubscriptionStatus(mockStatus);
+            return mockStatus;
+          }
+          return SubscriptionStatus.none();
+        }
+
+        // CustomerInfo から詳細な SubscriptionStatus を作成
+        final status =
+            _createSubscriptionStatusFromCustomerInfo(_customerInfo!);
+
+        // オンラインで取得した状態をローカルに保存
+        await _offlineManager.saveSubscriptionStatus(status);
+
+        return status;
+      } else {
+        // オフライン時: ローカルに保存された状態を取得
+        final offlineStatus =
+            await _offlineManager.getOfflineSubscriptionStatus();
+
+        if (offlineStatus != null) {
+          debugPrint(
+              "Using offline subscription status: ${offlineStatus.statusType}");
+          return offlineStatus;
+        }
+
+        // オフラインで保存されたデータがない場合
         if (kDebugMode) {
           return _getMockSubscriptionStatus();
         }
         return SubscriptionStatus.none();
       }
-
-      // CustomerInfo から詳細な SubscriptionStatus を作成
-      final status = _createSubscriptionStatusFromCustomerInfo(_customerInfo!);
-      return status;
     } catch (e) {
       _setError("Failed to get subscription status: $e");
+
+      // エラー時: オフライン状態を試行
+      try {
+        final offlineStatus =
+            await _offlineManager.getOfflineSubscriptionStatus();
+        if (offlineStatus != null) {
+          debugPrint(
+              "Using offline status after error: ${offlineStatus.statusType}");
+          return offlineStatus;
+        }
+      } catch (offlineError) {
+        debugPrint("Failed to get offline status: $offlineError");
+      }
 
       // テスト用: エラー時もモックデータを返す（開発中のみ）
       if (kDebugMode) {
@@ -278,5 +325,11 @@ class RevenueCatService {
   void dispose() {
     _statusController?.close();
     _statusController = null;
+    // オフライン管理のクリーンアップは不要（SharedPreferencesは自動管理）
+  }
+
+  /// オフライン管理サービスのデバッグ情報を取得
+  Map<String, dynamic> getOfflineDebugInfo() {
+    return _offlineManager.getDebugInfo();
   }
 }
