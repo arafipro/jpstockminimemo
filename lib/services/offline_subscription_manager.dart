@@ -279,6 +279,36 @@ class OfflineSubscriptionManager {
     }
   }
 
+  /// 強制的にオフライン状態にする（テスト用）
+  Future<bool> forceOffline() async {
+    try {
+      if (_prefs != null) {
+        await _prefs!.setBool(_isOnlineKey, false);
+        debugPrint("Forced offline mode enabled");
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("Failed to force offline mode: $e");
+      return false;
+    }
+  }
+
+  /// 強制的にオンライン状態にする（テスト用）
+  Future<bool> forceOnline() async {
+    try {
+      if (_prefs != null) {
+        await _prefs!.setBool(_isOnlineKey, true);
+        debugPrint("Forced online mode enabled");
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("Failed to force online mode: $e");
+      return false;
+    }
+  }
+
   /// オンライン状態のサブスクリプション状態と同期
   Future<bool> syncStatus(SubscriptionStatus onlineStatus) async {
     try {
