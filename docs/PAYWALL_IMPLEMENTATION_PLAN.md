@@ -32,65 +32,174 @@
 
 ## 📅 実装フェーズ
 
-### Phase 1: 基盤構築 (1 週間)
+### Phase 1: 最小限の基盤構築 (3-4 日)
 
-**ブランチ名**: `feature/paywall-foundation`
+**ブランチ名**: `feature/minimal-paywall-foundation`
 
-- [ ] RevenueCat SDK の統合
-- [ ] ペイウォール画面の作成
-- [ ] 基本的な課金状態管理
-- [ ] オフライン時の課金状態キャッシュ機能
-- [ ] ローカルストレージでの状態永続化
-- [ ] ネットワーク状態の監視機能
+#### Step 1.1: RevenueCat 基本設定 (1 日)
 
-### Phase 2: 課金機能実装 (1 週間)
+| タスク       | 内容                                                                   | 完了 |
+| ------------ | ---------------------------------------------------------------------- | ---- |
+| タスク 1.1.1 | `pubspec.yaml` に依存関係追加                                          | [x]  |
+| タスク 1.1.2 | `lib/services/revenue_cat_service.dart` 作成（最小限の機能）           | [x]  |
+| タスク 1.1.3 | `main.dart` で RevenueCat 初期化                                       | [x]  |
+| タスク 1.1.4 | **動作確認**: アプリ起動時に RevenueCat が正常に初期化されることを確認 | [x]  |
 
-**ブランチ名**: `feature/subscription-implementation`
+#### Step 1.2: 基本的なペイウォール画面 (1 日)
 
-- [ ] サブスクリプション購入機能
-- [ ] 無料トライアル機能
-- [ ] 購入復元機能
-- [ ] 広告削除機能の統合
-- [ ] オフライン時の購入状態表示
-- [ ] オンライン復帰時の状態同期
-- [ ] オフライン時のエラーハンドリング
+| タスク       | 内容                                                                       | 完了 |
+| ------------ | -------------------------------------------------------------------------- | ---- |
+| タスク 1.2.1 | `lib/views/paywall_page.dart` 作成（シンプルな UI）                        | [x]  |
+| タスク 1.2.2 | `lib/constants/subscription_plans.dart` 作成                               | [x]  |
+| タスク 1.2.3 | オンボーディング完了後にペイウォール画面を表示する遷移を追加               | [x]  |
+| タスク 1.2.4 | **動作確認**: ペイウォール画面が表示され、プラン一覧が表示されることを確認 | [x]  |
 
-### Phase 3: テスト・最適化 (1 週間)
+#### Step 1.3: 基本的な課金状態管理 (1 日)
 
-**ブランチ名**: `feature/testing-optimization`
+| タスク       | 内容                                                       | 完了 |
+| ------------ | ---------------------------------------------------------- | ---- |
+| タスク 1.3.1 | `lib/models/subscription_status.dart` 作成                 | [x]  |
+| タスク 1.3.2 | `lib/services/revenue_cat_service.dart` に状態管理機能追加 | [x]  |
+| タスク 1.3.3 | メイン画面で課金状態を表示                                 | [x]  |
+| タスク 1.3.4 | **動作確認**: 課金状態が正しく表示されることを確認         | [x]  |
 
-- [ ] 機能テスト
-- [ ] UI/UX 改善
-- [ ] エラーハンドリング強化
-- [ ] オフライン動作テスト
-- [ ] ネットワーク復帰時の同期テスト
-- [ ] A/B テスト設定
-- [ ] プッシュ通知設定
+#### Step 1.4: オフライン対応の基本実装 (1 日)
+
+| タスク       | 内容                                                            | 完了 |
+| ------------ | --------------------------------------------------------------- | ---- |
+| タスク 1.4.1 | `lib/services/offline_subscription_manager.dart` 作成（最小限） | [x]  |
+| タスク 1.4.2 | ローカルストレージでの状態保存                                  | [x]  |
+| タスク 1.4.3 | **動作確認**: オフライン時でも課金状態が表示されることを確認    | [x]  |
+
+### Phase 2: 課金機能の段階的実装 (1 週間)
+
+**ブランチ名**: `feature/step-by-step-subscription`
+
+#### Step 2.1: サブスクリプション購入機能 (2 日)
+
+| タスク       | 内容                                                               | 完了 |
+| ------------ | ------------------------------------------------------------------ | ---- |
+| タスク 2.1.1 | `lib/services/revenue_cat_service.dart` に購入機能追加             | [ ]  |
+| タスク 2.1.2 | `lib/views/paywall_page.dart` に購入ボタン追加                     | [ ]  |
+| タスク 2.1.3 | **動作確認**: 購入ボタンをタップして課金画面が表示されることを確認 | [ ]  |
+
+#### Step 2.2: 無料トライアル機能 (2 日)
+
+| タスク       | 内容                                                                 | 完了 |
+| ------------ | -------------------------------------------------------------------- | ---- |
+| タスク 2.2.1 | `lib/services/revenue_cat_service.dart` にトライアル機能追加         | [ ]  |
+| タスク 2.2.2 | トライアル開始・終了の処理                                           | [ ]  |
+| タスク 2.2.3 | **動作確認**: トライアル開始後、プレミアム機能が利用できることを確認 | [ ]  |
+
+#### Step 2.3: 購入復元機能 (1 日)
+
+| タスク       | 内容                                                       | 完了 |
+| ------------ | ---------------------------------------------------------- | ---- |
+| タスク 2.3.1 | `lib/services/revenue_cat_service.dart` に復元機能追加     | [ ]  |
+| タスク 2.3.2 | ペイウォール画面に復元ボタン追加                           | [ ]  |
+| タスク 2.3.3 | **動作確認**: 復元ボタンで過去の購入が復元されることを確認 | [ ]  |
+
+#### Step 2.4: 広告削除機能の統合 (2 日)
+
+| タスク       | 内容                                                   | 完了 |
+| ------------ | ------------------------------------------------------ | ---- |
+| タスク 2.4.1 | 既存の広告表示ロジックを修正                           | [ ]  |
+| タスク 2.4.2 | 課金状態に応じた広告表示制御                           | [ ]  |
+| タスク 2.4.3 | **動作確認**: 課金後、広告が表示されなくなることを確認 | [ ]  |
+
+### Phase 3: 高度な機能実装 (1 週間)
+
+**ブランチ名**: `feature/advanced-features`
+
+#### Step 3.1: A/B テスト機能 (2 日)
+
+| タスク       | 内容                                                     | 完了 |
+| ------------ | -------------------------------------------------------- | ---- |
+| タスク 3.1.1 | `lib/services/revenue_cat_ab_test_service.dart` 作成     | [ ]  |
+| タスク 3.1.2 | ペイウォール画面に A/B テスト機能統合                    | [ ]  |
+| タスク 3.1.3 | **動作確認**: 異なるバリエーションが表示されることを確認 | [ ]  |
+
+#### Step 3.2: 通知機能 (2 日)
+
+| タスク       | 内容                                           | 完了 |
+| ------------ | ---------------------------------------------- | ---- |
+| タスク 3.2.1 | `lib/services/notification_service.dart` 作成  | [ ]  |
+| タスク 3.2.2 | トライアル終了リマインダー                     | [ ]  |
+| タスク 3.2.3 | **動作確認**: 通知が正しく送信されることを確認 | [ ]  |
+
+#### Step 3.3: オフライン機能強化 (2 日)
+
+| タスク       | 内容                                                        | 完了 |
+| ------------ | ----------------------------------------------------------- | ---- |
+| タスク 3.3.1 | `lib/services/offline_subscription_manager.dart` 機能拡張   | [ ]  |
+| タスク 3.3.2 | ネットワーク復帰時の同期機能                                | [ ]  |
+| タスク 3.3.3 | **動作確認**: オフライン → オンライン復帰時の状態同期を確認 | [ ]  |
+
+#### Step 3.4: UI/UX 改善 (1 日)
+
+| タスク       | 内容                                                              | 完了 |
+| ------------ | ----------------------------------------------------------------- | ---- |
+| タスク 3.4.1 | ペイウォール画面のデザイン改善                                    | [ ]  |
+| タスク 3.4.2 | ローディング状態の追加                                            | [ ]  |
+| タスク 3.4.3 | エラーハンドリングの改善                                          | [ ]  |
+| タスク 3.4.4 | **動作確認**: UI が改善され、エラー処理が適切に動作することを確認 | [ ]  |
 
 ---
 
 ## 🏗️ 技術仕様
 
-### ファイル構造
+### 段階的なファイル構造
+
+#### Phase 1 完了時
+
+```
+lib/
+├── services/
+│   ├── revenue_cat_service.dart          # 基本機能のみ
+│   └── offline_subscription_manager.dart # 最小限の機能
+├── models/
+│   └── subscription_status.dart          # 基本モデル
+├── views/
+│   └── paywall_page.dart                 # シンプルなUI
+└── constants/
+    └── subscription_plans.dart           # プラン定義
+```
+
+#### Phase 2 完了時
+
+```
+lib/
+├── services/
+│   ├── revenue_cat_service.dart          # 購入・トライアル・復元機能追加
+│   └── offline_subscription_manager.dart # 基本機能
+├── models/
+│   └── subscription_status.dart
+├── views/
+│   └── paywall_page.dart                 # 購入ボタン・復元ボタン追加
+└── constants/
+    └── subscription_plans.dart
+```
+
+#### Phase 3 完了時
 
 ```
 lib/
 ├── services/
 │   ├── revenue_cat_service.dart
-│   ├── offline_subscription_manager.dart
-│   ├── revenue_cat_ab_test_service.dart
-│   └── notification_service.dart
+│   ├── offline_subscription_manager.dart # 機能拡張
+│   ├── revenue_cat_ab_test_service.dart  # 新規追加
+│   └── notification_service.dart         # 新規追加
 ├── models/
 │   ├── subscription_status.dart
-│   └── experiment_config.dart
+│   └── experiment_config.dart            # 新規追加
 ├── views/
-│   └── paywall_page.dart
+│   └── paywall_page.dart                 # UI改善
 ├── components/
-│   ├── subscription_plan_card.dart
-│   └── subscription_features_list.dart
+│   ├── subscription_plan_card.dart       # 新規追加
+│   └── subscription_features_list.dart   # 新規追加
 └── constants/
     ├── subscription_plans.dart
-    └── notification_types.dart
+    └── notification_types.dart           # 新規追加
 ```
 
 ### 状態管理
@@ -103,11 +212,20 @@ enum SubscriptionStatus {
   expired         // 期限切れ
 }
 
-// オフライン状態管理
-class OfflineSubscriptionManager {
-  // ローカルキャッシュの管理
-  // ネットワーク復帰時の同期
-  // オフライン時の状態表示
+// 段階的に機能を追加
+class RevenueCatService {
+  // Phase 1: 基本機能
+  Future<void> initialize() async { /* 初期化 */ }
+  Future<SubscriptionStatus> getSubscriptionStatus() async { /* 状態取得 */ }
+
+  // Phase 2: 課金機能
+  Future<bool> purchaseSubscription(String productId) async { /* 購入 */ }
+  Future<bool> startTrial() async { /* トライアル開始 */ }
+  Future<bool> restorePurchases() async { /* 復元 */ }
+
+  // Phase 3: 高度な機能
+  Future<Offering?> getExperimentOffering() async { /* A/B テスト */ }
+  Future<void> scheduleNotifications() async { /* 通知設定 */ }
 }
 ```
 
@@ -441,7 +559,7 @@ class NotificationPermissionManager {
 
 ## 🔧 実装手順
 
-### 1. 準備作業
+### 1. 準備作業 (1 日)
 
 **ブランチ名**: `feature/setup-preparation`
 
@@ -454,10 +572,10 @@ class NotificationPermissionManager {
 
 ```yaml
 dependencies:
-  purchases_flutter: ^6.0.0
-  purchases_ui_flutter: ^6.15.0
-  connectivity_plus: ^5.0.0 # ネットワーク状態監視
-  flutter_local_notifications: ^16.0.0 # ローカル通知用
+  purchases_flutter: ^9.2.0
+  purchases_ui_flutter: ^9.2.0
+  connectivity_plus: ^6.1.5 # ネットワーク状態監視
+  flutter_local_notifications: ^19.4.0 # ローカル通知用
 ```
 
 ### 3. 環境変数設定

@@ -63,7 +63,42 @@ class ListPage extends StatelessWidget {
         ),
         body: Column(
           children: [
-            AdBanner(),
+            // 課金状態に応じた広告表示制御
+            Consumer<RevenueCatService>(
+              builder: (context, revenueCatService, child) {
+                return StreamBuilder<SubscriptionStatus>(
+                  stream: revenueCatService.statusStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final status = snapshot.data!;
+                      // プレミアムユーザーは広告を非表示
+                      if (status.isPremium) {
+                        return const SizedBox.shrink();
+                      }
+                      // 非プレミアムユーザーは広告を表示
+                      return AdBanner();
+                    }
+                    // ローディング中は広告を表示
+                    return AdBanner();
+                  },
+                );
+              },
+            ),
+            // 課金状態表示（ローディング中は非表示）
+            Consumer<RevenueCatService>(
+              builder: (context, revenueCatService, child) {
+                return StreamBuilder<SubscriptionStatus>(
+                  stream: revenueCatService.statusStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return const SubscriptionStatusDisplay();
+                    }
+                    // ローディング中は非表示
+                    return const SizedBox.shrink();
+                  },
+                );
+              },
+            ),
             Expanded(
               child: Consumer<ListModel>(
                 builder: (
