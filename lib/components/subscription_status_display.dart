@@ -8,21 +8,13 @@ class SubscriptionStatusDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RevenueCatService>(
       builder: (context, revenueCatService, child) {
-        debugPrint(
-            "SubscriptionStatusDisplay: Building with RevenueCatService");
         return StreamBuilder<SubscriptionStatus>(
           stream: revenueCatService.statusStream,
           builder: (context, snapshot) {
-            debugPrint(
-                "SubscriptionStatusDisplay: StreamBuilder snapshot - hasData: ${snapshot.hasData}, hasError: ${snapshot.hasError}, error: ${snapshot.error}");
             if (snapshot.hasData) {
               final status = snapshot.data!;
-              debugPrint(
-                  "SubscriptionStatusDisplay: Status received - ${status.statusType}");
               return _buildStatusWidget(context, status);
             }
-            debugPrint(
-                "SubscriptionStatusDisplay: No data, showing loading widget");
             return _buildLoadingWidget();
           },
         );

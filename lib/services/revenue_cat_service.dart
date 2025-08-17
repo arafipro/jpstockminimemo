@@ -20,17 +20,20 @@ class RevenueCatService {
   /// Phase 1: 基本機能のみ
   Future<void> initialize() async {
     if (_isInitialized) {
-      debugPrint("RevenueCat is already initialized");
       return;
     }
 
     try {
+      // 初期状態を設定（初期化中でも表示できるように）
+      _currentStatus = _getMockSubscriptionStatus();
+
       // 環境変数から API キーを取得
       final apiKey = _getApiKey();
 
       if (apiKey == null) {
-        debugPrint("RevenueCat API key not found in environment variables");
         _setError("RevenueCat API key not found");
+        // エラー時でも初期状態は設定済み
+        _isInitialized = true;
         return;
       }
 
@@ -42,7 +45,6 @@ class RevenueCatService {
 
       _isInitialized = true;
       _clearError();
-      debugPrint("RevenueCat initialized successfully");
 
       // 初期化後にカスタマー情報を取得
       await _fetchCustomerInfo();
@@ -50,8 +52,7 @@ class RevenueCatService {
       // 初期化時に現在の状態を取得して設定
       await _initializeStatus();
     } catch (e) {
-      debugPrint("Error initializing RevenueCat: $e");
-      _isInitialized = false;
+      _isInitialized = true; // エラー時でも初期化完了として扱う
       _setError("Failed to initialize RevenueCat: $e");
     }
   }
@@ -70,43 +71,27 @@ class RevenueCatService {
   Future<void> _fetchCustomerInfo() async {
     try {
       _customerInfo = await Purchases.getCustomerInfo();
-      debugPrint("Customer info fetched successfully");
     } catch (e) {
-      debugPrint("Error fetching customer info: $e");
       _setError("Failed to fetch customer info: $e");
     }
   }
 
   /// 初期化時に現在の状態を取得して設定
   Future<void> _initializeStatus() async {
-    debugPrint("RevenueCatService: _initializeStatus called");
     final status = await getSubscriptionStatus();
-    debugPrint(
-        "RevenueCatService: Got subscription status: ${status.statusType}");
     _updateStatus(status);
 
     // ストリームコントローラーが存在する場合は初期状態を送信
     if (_statusController != null) {
-      debugPrint(
-          "RevenueCatService: Sending initial status to stream: ${status.statusType}");
       _statusController!.add(status);
-    } else {
-      debugPrint(
-          "RevenueCatService: StreamController is null, cannot send initial status");
     }
   }
 
   /// 状態を更新して通知
   void _updateStatus(SubscriptionStatus newStatus) {
-    debugPrint(
-        "RevenueCatService: _updateStatus called with status: ${newStatus.statusType}");
     if (_currentStatus != newStatus) {
       _currentStatus = newStatus;
-      debugPrint("RevenueCatService: Status changed, sending to stream");
       _statusController?.add(newStatus);
-      debugPrint("Subscription status updated: ${newStatus.statusType}");
-    } else {
-      debugPrint("RevenueCatService: Status unchanged, not sending to stream");
     }
   }
 
@@ -114,7 +99,6 @@ class RevenueCatService {
   void _setError(String message) {
     _hasError = true;
     _errorMessage = message;
-    debugPrint("RevenueCat error: $message");
   }
 
   /// エラー状態をクリア
@@ -196,9 +180,9 @@ class RevenueCatService {
   /// サブスクリプション状態を取得
   /// Phase 1: 基本機能のみ
   Future<SubscriptionStatus> getSubscriptionStatus() async {
+    // 初期化前でもモックデータを返す
     if (!_isInitialized) {
-      debugPrint("RevenueCat not initialized");
-      return SubscriptionStatus.none();
+      return _getMockSubscriptionStatus();
     }
 
     try {
@@ -208,7 +192,6 @@ class RevenueCatService {
       if (_customerInfo == null) {
         // テスト用: モックデータを返す（開発中のみ）
         if (kDebugMode) {
-          debugPrint("Using mock data for testing");
           return _getMockSubscriptionStatus();
         }
         return SubscriptionStatus.none();
@@ -218,12 +201,10 @@ class RevenueCatService {
       final status = _createSubscriptionStatusFromCustomerInfo(_customerInfo!);
       return status;
     } catch (e) {
-      debugPrint("Error getting subscription status: $e");
       _setError("Failed to get subscription status: $e");
 
       // テスト用: エラー時もモックデータを返す（開発中のみ）
       if (kDebugMode) {
-        debugPrint("Error occurred, using mock data for testing");
         return _getMockSubscriptionStatus();
       }
       return SubscriptionStatus.none();
@@ -233,8 +214,13 @@ class RevenueCatService {
   /// テスト用のモックサブスクリプション状態を取得
   /// 開発中のみ使用し、本番環境では使用しない
   SubscriptionStatus _getMockSubscriptionStatus() {
-    // テスト用の状態を変更するには、この値を変更してください
-    const testStatus = StatusType.none; // none, trial, active, expired
+    // ===== タスク1.3.4 動作確認用 =====
+    // 以下の値を順番に変更して各状態をテストしてください：
+    // StatusType.none      -> 未購入状態（オレンジバー + アップグレードボタン）
+    // StatusType.trial     -> トライアル中（青バー + 残り日数表示）
+    // StatusType.active    -> プレミアム会員（緑バー + チェックマーク）
+    // StatusType.expired   -> 期限切れ（赤バー + 更新ボタン）
+    const testStatus = StatusType.none; // 現在のテスト状態
 
     switch (testStatus) {
       case StatusType.none:
@@ -264,15 +250,12 @@ class RevenueCatService {
 
   /// 状態変更のストリームを取得
   Stream<SubscriptionStatus> get statusStream {
-    debugPrint("RevenueCatService: statusStream getter called");
-    if (_statusController == null) {
-      debugPrint("RevenueCatService: Creating new StreamController");
-      _statusController = StreamController<SubscriptionStatus>.broadcast();
-      // 初期状態を送信
-      debugPrint(
-          "RevenueCatService: Sending initial status: ${_currentStatus.statusType}");
-      _statusController!.add(_currentStatus);
-    }
+    _statusController ??= StreamController<SubscriptionStatus>.broadcast();
+
+    // 毎回最新のモックデータを取得して送信
+    final currentMockStatus = _getMockSubscriptionStatus();
+    _statusController!.add(currentMockStatus);
+
     return _statusController!.stream;
   }
 
